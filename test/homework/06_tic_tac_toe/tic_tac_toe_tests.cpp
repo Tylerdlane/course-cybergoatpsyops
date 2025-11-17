@@ -1,6 +1,7 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
 #include "tic_tac_toe.h"
+#include "tic_tac_toe_manager.h"
 
 #include <vector>
 
@@ -105,5 +106,66 @@ TEST_CASE("Test win diagonally from bottom left")
 	TicTacToe game;
 	game.start_game("X");
 	play_sequence_and_verify(game, {7, 1, 5, 2, 3}, "X");
+}
+
+TEST_CASE("Test manager get winner total")
+{
+	TicTacToeManager manager;
+	TicTacToe game1, game2, game3, game4;
+
+	// Game 1: X wins
+	game1.start_game("X");
+	game1.mark_board(1);  // X
+	game1.mark_board(2);  // O
+	game1.mark_board(4);  // X
+	game1.mark_board(5);  // O
+	game1.mark_board(7);  // X wins
+	REQUIRE(game1.game_over() == true);
+	REQUIRE(game1.get_winner() == "X");
+	manager.save_game(game1);
+
+	// Game 2: O wins
+	game2.start_game("O");
+	game2.mark_board(1);  // O
+	game2.mark_board(2);  // X
+	game2.mark_board(5);  // O
+	game2.mark_board(3);  // X
+	game2.mark_board(9);  // O wins
+	REQUIRE(game2.game_over() == true);
+	REQUIRE(game2.get_winner() == "O");
+	manager.save_game(game2);
+
+	// Game 3: Tie
+	game3.start_game("X");
+	game3.mark_board(1);  // X
+	game3.mark_board(2);  // O
+	game3.mark_board(3);  // X
+	game3.mark_board(4);  // O
+	game3.mark_board(5);  // X
+	game3.mark_board(7);  // O
+	game3.mark_board(6);  // X
+	game3.mark_board(9);  // O
+	game3.mark_board(8);  // X - tie
+	REQUIRE(game3.game_over() == true);
+	REQUIRE(game3.get_winner() == "C");
+	manager.save_game(game3);
+
+	// Game 4: X wins again
+	game4.start_game("X");
+	game4.mark_board(1);  // X
+	game4.mark_board(3);  // O
+	game4.mark_board(5);  // X
+	game4.mark_board(6);  // O
+	game4.mark_board(9);  // X wins
+	REQUIRE(game4.game_over() == true);
+	REQUIRE(game4.get_winner() == "X");
+	manager.save_game(game4);
+
+	int o_wins = 0, x_wins = 0, ties = 0;
+	manager.get_winner_total(o_wins, x_wins, ties);
+
+	REQUIRE(x_wins == 2);
+	REQUIRE(o_wins == 1);
+	REQUIRE(ties == 1);
 }
 
