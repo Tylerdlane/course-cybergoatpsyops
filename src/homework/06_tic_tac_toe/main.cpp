@@ -2,6 +2,7 @@
 #include <cctype>
 #include <iostream>
 #include "tic_tac_toe.h"
+#include "tic_tac_toe_manager.h"
 
 using std::cin;
 using std::cout;
@@ -71,6 +72,7 @@ std::string prompt_continue()
 int main()
 {
 	TicTacToe game;
+	TicTacToeManager manager;
 	std::string continue_choice = "Y";
 
 	cout << "Welcome to Tic Tac Toe!" << endl;
@@ -100,6 +102,13 @@ int main()
 		{
 			cout << "Player " << winner << " wins!" << endl;
 		}
+
+		manager.save_game(game);
+
+		int o_wins = 0, x_wins = 0, tie_count = 0;
+		manager.get_winner_total(o_wins, x_wins, tie_count);
+		cout << "\nGame Totals:" << endl;
+		cout << "X wins: " << x_wins << ", O wins: " << o_wins << ", Ties: " << tie_count << endl;
 
 		continue_choice = prompt_continue();
 	}
