@@ -62,12 +62,21 @@ std::string TicTacToe::get_winner() const
 
 void TicTacToe::display_board() const
 {
-	for (std::size_t i = 0; i < pegs.size(); i += 3)
+	for (std::size_t i = 0; i < pegs.size(); i += board_size)
 	{
-		std::cout << pegs[i] << " | " << pegs[i + 1] << " | " << pegs[i + 2] << '\n';
-		if (i < pegs.size() - 3)
+		std::cout << pegs[i];
+		for (int j = 1; j < board_size; ++j)
 		{
-			std::cout << "---------" << '\n';
+			std::cout << " | " << pegs[i + j];
+		}
+		std::cout << '\n';
+		if (i < pegs.size() - board_size)
+		{
+			for (int j = 0; j < board_size * 2 + (board_size - 1); ++j)
+			{
+				std::cout << '-';
+			}
+			std::cout << '\n';
 		}
 	}
 }
@@ -79,48 +88,16 @@ void TicTacToe::set_next_player()
 
 bool TicTacToe::check_column_win() const
 {
-	for (int col = 0; col < 3; ++col)
-	{
-		int index = col;
-		if (pegs[index] != " " &&
-		    pegs[index] == pegs[index + 3] &&
-		    pegs[index] == pegs[index + 6])
-		{
-			return true;
-		}
-	}
-
 	return false;
 }
 
 bool TicTacToe::check_row_win() const
 {
-	for (int row = 0; row < 3; ++row)
-	{
-		int index = row * 3;
-		if (pegs[index] != " " &&
-		    pegs[index] == pegs[index + 1] &&
-		    pegs[index] == pegs[index + 2])
-		{
-			return true;
-		}
-	}
-
 	return false;
 }
 
 bool TicTacToe::check_diagonal_win() const
 {
-	if (pegs[0] != " " && pegs[0] == pegs[4] && pegs[0] == pegs[8])
-	{
-		return true;
-	}
-
-	if (pegs[2] != " " && pegs[2] == pegs[4] && pegs[2] == pegs[6])
-	{
-		return true;
-	}
-
 	return false;
 }
 
