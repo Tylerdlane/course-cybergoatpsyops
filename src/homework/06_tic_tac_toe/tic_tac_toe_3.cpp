@@ -1,32 +1,48 @@
 #include "tic_tac_toe_3.h"
 
-/*
-class function check_column_win
-Win by column if and return true if
-0,3, and 6 are equal
-1, 4, and 7
-2, 5, and 8
-else
-false
-*/
+bool TicTacToe3::check_column_win() const
+{
+	for (int col = 0; col < 3; ++col)
+	{
+		int index = col;
+		if (pegs[index] != " " &&
+		    pegs[index] == pegs[index + 3] &&
+		    pegs[index] == pegs[index + 6])
+		{
+			return true;
+		}
+	}
 
+	return false;
+}
 
+bool TicTacToe3::check_row_win() const
+{
+	for (int row = 0; row < 3; ++row)
+	{
+		int index = row * 3;
+		if (pegs[index] != " " &&
+		    pegs[index] == pegs[index + 1] &&
+		    pegs[index] == pegs[index + 2])
+		{
+			return true;
+		}
+	}
 
-/*
-class function check_row_win
-Win by row if
-0, 1, 2 are equal
-3,4,5 are equal
-6,7,8 are equal
-*/
+	return false;
+}
 
+bool TicTacToe3::check_diagonal_win() const
+{
+	if (pegs[0] != " " && pegs[0] == pegs[4] && pegs[0] == pegs[8])
+	{
+		return true;
+	}
 
+	if (pegs[2] != " " && pegs[2] == pegs[4] && pegs[2] == pegs[6])
+	{
+		return true;
+	}
 
-/*
-class function check_diagonal_win
-Win diagonally
-0 1 2
-3 4 5
-6 7 8
-
-*/
+	return false;
+}

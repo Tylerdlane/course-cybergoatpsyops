@@ -1,7 +1,9 @@
 
 #include <cctype>
 #include <iostream>
-#include "tic_tac_toe.h"
+#include <memory>
+#include "tic_tac_toe_3.h"
+#include "tic_tac_toe_4.h"
 #include "tic_tac_toe_manager.h"
 
 using std::cin;
@@ -17,6 +19,21 @@ std::string normalize_player_input(std::string value)
 		value[0] = static_cast<char>(std::toupper(value[0]));
 	}
 	return value;
+}
+
+int prompt_game_type()
+{
+	int game_type = 0;
+	cout << "Select game type (3 for 3x3, 4 for 4x4): ";
+	cin >> game_type;
+
+	while (game_type != 3 && game_type != 4)
+	{
+		cout << "Invalid game type. Enter 3 or 4: ";
+		cin >> game_type;
+	}
+
+	return game_type;
 }
 
 std::string prompt_player()
@@ -36,15 +53,15 @@ std::string prompt_player()
 	return player_choice;
 }
 
-int prompt_position()
+int prompt_position(int max_position)
 {
 	int position = 0;
-	cout << "Enter a position (1-9): ";
+	cout << "Enter a position (1-" << max_position << "): ";
 	cin >> position;
 
-	while (position < 1 || position > 9)
+	while (position < 1 || position > max_position)
 	{
-		cout << "Invalid position. Enter a number between 1 and 9: ";
+		cout << "Invalid position. Enter a number between 1 and " << max_position << ": ";
 		cin >> position;
 	}
 
@@ -71,7 +88,6 @@ std::string prompt_continue()
 
 int main()
 {
-	TicTacToe game;
 	TicTacToeManager manager;
 	std::string continue_choice = "Y";
 
@@ -79,21 +95,35 @@ int main()
 
 	while (continue_choice == "Y")
 	{
-		const std::string first_player = prompt_player();
-		game.start_game(first_player);
+		const int game_type = prompt_game_type();
+		std::unique_ptr<TicTacToe> game;
 
-		while (!game.game_over())
+		if (game_type == 3)
+		{
+			game = std::make_unique<TicTacToe3>();
+		}
+		else
+		{
+			game = std::make_unique<TicTacToe4>();
+		}
+
+		const int max_position = (game_type == 3) ? 9 : 16;
+
+		const std::string first_player = prompt_player();
+		game->start_game(first_player);
+
+		while (!game->game_over())
 		{
 			cout << "\nCurrent board:\n";
-			game.display_board();
-			cout << "Player " << game.get_player() << "'s turn." << endl;
-			const int position = prompt_position();
-			game.mark_board(position);
+			game->display_board();
+			cout << "Player " << game->get_player() << "'s turn." << endl;
+			const int position = prompt_position(max_position);
+			game->mark_board(position);
 		}
 
 		cout << "\nFinal board:\n";
-		game.display_board();
-		const std::string winner = game.get_winner();
+		game->display_board();
+		const std::string winner = game->get_winner();
 		if (winner == "C")
 		{
 			cout << "It's a tie!" << endl;
@@ -112,6 +142,9 @@ int main()
 
 		continue_choice = prompt_continue();
 	}
+
+	cout << "\nAll games played:" << endl;
+	manager.display();
 
 	cout << "Thanks for playing!" << endl;
 	return 0;
